@@ -1,8 +1,10 @@
-resource "aws_security_group" "security_esp" {
-  name        = "security_esp"
-  description = "security_esp"
-  vpc_id      = aws_vpc.main.id
+# Grupo de seguridad para la web
+resource "aws_security_group" "web_sg" {
+  name        = "grupo_seguridad_web"
+  description = "Grupo de seguridad para acceso web"
+  vpc_id      = aws_vpc.vpc_principal.id
 
+  # Reglas de ingreso
   ingress {
     from_port   = 22
     to_port     = 22
@@ -17,6 +19,7 @@ resource "aws_security_group" "security_esp" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Reglas de salida
   egress {
     from_port   = 0
     to_port     = 0
@@ -25,34 +28,36 @@ resource "aws_security_group" "security_esp" {
   }
 
   tags = {
-    Name = "security_esp"
+    Name = "grupo_seguridad_web"
   }
 }
 
-resource "aws_instance" "ec2-1" {
-  ami           = "ami-01b799c439fd5516a"
-  instance_type = "t2.micro"
-  subnet_id     = aws_subnet.public_1.id
+# Instancia EC2 en la subred pública 1
+resource "aws_instance" "web_1" {
+  ami                         = "ami-01572eda7c4411960"
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.subred_publica_1.id
   associate_public_ip_address = true
-  key_name      = "llave"
+  key_name                    = "key2"
 
-  vpc_security_group_ids = [aws_security_group.security_esp.id]
+  vpc_security_group_ids = [aws_security_group.web_sg.id]
 
   tags = {
-    Name = "inst_1"
+    Name = "instancia_web_1"
   }
 }
 
-resource "aws_instance" "ec2-2" {
-  ami           = "ami-01b799c439fd5516a"
-  instance_type = "t2.micro"
-  subnet_id     = aws_subnet.public_2.id
+# Instancia EC2 en la subred pública 2
+resource "aws_instance" "web_2" {
+  ami                         = "ami-01572eda7c4411960"
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.subred_publica_2.id
   associate_public_ip_address = true
-  key_name      = "llave"
+  key_name                    = "key2"
 
-  vpc_security_group_ids = [aws_security_group.security_esp.id]
+  vpc_security_group_ids = [aws_security_group.web_sg.id]
 
   tags = {
-    Name = "inst_2"
+    Name = "instancia_web_2"
   }
 }
